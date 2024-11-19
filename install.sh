@@ -45,12 +45,16 @@ sudo pacman -S --noconfirm paccache
 echo "Instalando temas y iconos..."
 yay -S --noconfirm whitesur-gtk-theme-git nordzy-icons
 sudo pacman -S --noconfirm lxappearance
+ 
+# Instalar GDM para gestionar el login en Wayland
+echo "Instalando GDM..."
+sudo pacman -S --noconfirm gdm
 
-# Instalar SDDM y habilitar el servicio
-echo "Instalando y configurando SDDM..."
-sudo pacman -S --noconfirm sddm sddm-kcm
-sudo systemctl enable sddm.service
-sudo systemctl start sddm.service
+# Habilitar y arrancar GDM
+echo "Habilitando y arrancando GDM..."
+sudo systemctl enable gdm.service
+sudo systemctl start gdm.service
+
 
 # Instalar bloqueo de pantalla
 echo "Instalando swaylock..."
