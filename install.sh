@@ -72,6 +72,10 @@ sudo systemctl start ufw || error_handler
 
 # Limpieza de paquetes antiguos
 echo "Limpiando paquetes antiguos..."
+if ! command -v paccache &> /dev/null; then
+    echo "Instalando pacman-contrib (para paccache)..."
+    sudo pacman -S --noconfirm pacman-contrib || error_handler
+fi
 sudo paccache -r || error_handler
 
 # Instalación de temas e iconos
