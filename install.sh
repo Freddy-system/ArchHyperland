@@ -1,63 +1,78 @@
 #!/bin/bash
 
+# Función para manejar errores
+error_handler() {
+    echo "Error en el paso anterior. Verifica los mensajes anteriores."
+    exit 1
+}
+
 # Actualización del sistema
 echo "Actualizando el sistema..."
-sudo pacman -Syu --noconfirm
+sudo pacman -Syu --noconfirm || error_handler
 
-# Instalar Wayland y los componentes necesarios
+# Instalación de Wayland y dependencias
 echo "Instalando Wayland y dependencias..."
 sudo pacman -S --noconfirm wayland wayland-utils xorg-xwayland mesa vulkan-intel \
 base-devel git pipewire pipewire-alsa pipewire-pulse wireplumber \
 brightnessctl tlp swaybg mako alacritty rofi ranger nemo \
 ttf-nerd-fonts-symbols ttf-firacode ttf-jetbrains-mono-nerd \
-wl-clipboard qt5-wayland qt6-wayland gtk3 gtk4
+wl-clipboard qt5-wayland qt6-wayland gtk3 gtk4 || error_handler
 
-# Clonar y compilar yay desde AUR
-echo "Clonando y compilando yay..."
-git clone https://aur.archlinux.org/yay.git
-cd yay
-makepkg -si --noconfirm
-cd ..
+# Instalación de yay
+if ! command -v yay &> /dev/null; then
+    echo "Clonando y compilando yay desde AUR..."
+    git clone https://aur.archlinux.org/yay.git || error_handler
+    cd yay
+    makepkg -si --noconfirm || error_handler
+    cd ..
+    rm -rf yay
+else
+    echo "yay ya está instalado."
+fi
 
-# Instalar Hyperland y Eww desde AUR
+# Instalación de Hyperland y Eww
 echo "Instalando Hyperland y Eww..."
-yay -S --noconfirm hyperland eww
+yay -S --noconfirm hyperland eww || error_handler
 
-# Instalar navegador Brave
+# Configuración inicial de Hyperland
+echo "Configurando Hyperland..."
+mkdir -p ~/.config/hyperland
+if [ ! -f ~/.config/hyperland/hyprland.conf ]; then
+    cp /usr/share/hyperland/hyprland.conf ~/.config/hyperland/ || error_handler
+fi
+
+# Instalación del navegador Brave
 echo "Instalando navegador Brave..."
-yay -S --noconfirm brave-bin
+yay -S --noconfirm brave-bin || error_handler
 
-# Instalar otros paquetes útiles
+# Instalación de otros paquetes útiles
 echo "Instalando paquetes útiles..."
-sudo pacman -S --noconfirm iwd libreoffice-fresh gimp vlc
+sudo pacman -S --noconfirm iwd libreoffice-fresh gimp vlc || error_handler
 
-# Configuración de seguridad y firewall
+# Configuración del firewall
 echo "Configurando firewall..."
-sudo pacman -S --noconfirm ufw
-sudo systemctl enable ufw
-sudo systemctl start ufw
+sudo pacman -S --noconfirm ufw || error_handler
+sudo systemctl enable ufw || error_handler
+sudo systemctl start ufw || error_handler
 
-# Limpiar paquetes antiguos
+# Limpieza de paquetes antiguos
 echo "Limpiando paquetes antiguos..."
-sudo pacman -S --noconfirm paccache
+sudo paccache -r || error_handler
 
-# Instalar temas y iconos
-echo "Instalando temas y iconos..."
-yay -S --noconfirm whitesur-gtk-theme-git nordzy-icons
-sudo pacman -S --noconfirm lxappearance
- 
-# Instalar GDM para gestionar el login en Wayland
-echo "Instalando GDM..."
-sudo pacman -S --noconfirm gdm
+# Instalación de temas e iconos
+echo "Instalando temas e iconos..."
+yay -S --noconfirm whitesur-gtk-theme-git nordzy-icons || error_handler
+sudo pacman -S --noconfirm lxappearance || error_handler
 
-# Habilitar y arrancar GDM
-echo "Habilitando y arrancando GDM..."
-sudo systemctl enable gdm.service
-sudo systemctl start gdm.service
+# Instalación de un gestor de inicio de sesión ligero (ly)
+echo "Instalando gestor de inicio de sesión ly..."
+yay -S --noconfirm ly || error_handler
+sudo systemctl enable ly.service || error_handler
+sudo systemctl disable gdm.service || error_handler
 
-
-# Instalar bloqueo de pantalla
+# Instalación de bloqueo de pantalla
 echo "Instalando swaylock..."
-yay -S --noconfirm swaylock
+yay -S --noconfirm swaylock || error_handler
 
-echo "Instalación completada. ¡Reinicia tu sistema!"
+# Configuración final
+echo "Instalación y configuración completadas. Reinicia tu sistema para aplicar los cambios."
