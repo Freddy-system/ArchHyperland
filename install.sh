@@ -15,7 +15,6 @@ echo "Instalando Wayland y dependencias..."
 sudo pacman -S --noconfirm wayland wayland-utils xorg-xwayland mesa vulkan-intel \
 base-devel git pipewire pipewire-alsa pipewire-pulse wireplumber \
 brightnessctl tlp swaybg mako alacritty rofi ranger nemo \
-ttf-nerd-fonts-symbols ttf-firacode ttf-jetbrains-mono-nerd \
 wl-clipboard qt5-wayland qt6-wayland gtk3 gtk4 || error_handler
 
 # Instalación de yay
@@ -36,9 +35,12 @@ yay -S --noconfirm hyperland eww || error_handler
 
 # Configuración inicial de Hyperland
 echo "Configurando Hyperland..."
-mkdir -p ~/.config/hyperland
-if [ ! -f ~/.config/hyperland/hyprland.conf ]; then
-    cp /usr/share/hyperland/hyprland.conf ~/.config/hyperland/ || error_handler
+mkdir -p ~/.config/hypr
+if [ -f /usr/share/hyprland/hyprland.conf ]; then
+    cp /usr/share/hyprland/hyprland.conf ~/.config/hypr/ || error_handler
+else
+    echo "No se encontró el archivo predeterminado. Descargando ejemplo..."
+    wget -O ~/.config/hypr/hyprland.conf https://raw.githubusercontent.com/hyprwm/Hyprland/main/example/hyprland.conf || error_handler
 fi
 
 # Instalación del navegador Brave
@@ -73,6 +75,20 @@ sudo systemctl disable gdm.service || error_handler
 # Instalación de bloqueo de pantalla
 echo "Instalando swaylock..."
 yay -S --noconfirm swaylock || error_handler
+
+# Configuración adicional para Alacritty
+echo "Verificando configuración de Alacritty..."
+mkdir -p ~/.config/alacritty
+if [ ! -f ~/.config/alacritty/alacritty.yml ]; then
+    cat << EOF > ~/.config/alacritty/alacritty.yml
+# Configuración básica de Alacritty
+window:
+  opacity: 0.9
+  dynamic_padding: true
+font:
+  size: 12
+EOF
+fi
 
 # Configuración final
 echo "Instalación y configuración completadas. Reinicia tu sistema para aplicar los cambios."
