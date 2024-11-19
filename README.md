@@ -1,52 +1,70 @@
-<<<<<<< HEAD
+
 # ArchHyperland
-instalación de hyperland en arch
-=======
-# Actualización del sistema
-sudo pacman -Syu
 
-# Instalar Wayland y los componentes necesarios
-sudo pacman -S wayland wayland-utils xorg-xwayland mesa vulkan-intel \
-base-devel git pipewire pipewire-alsa pipewire-pulse wireplumber \
-brightnessctl tlp swaybg mako alacritty rofi ranger nemo \
-ttf-nerd-fonts-symbols ttf-firacode ttf-jetbrains-mono-nerd \
-wl-clipboard qt5-wayland qt6-wayland gtk3 gtk4
+Este es un script de instalación para configurar Hyperland en Arch Linux.
 
-# Clonar y compilar yay desde AUR
-git clone https://aur.archlinux.org/yay.git
-cd yay
-makepkg -si
+## Pasos para la instalación
 
-# Instalar Hyperland y Eww desde AUR
-yay -S hyperland eww
+1. **Actualizar el sistema**:
+   ```bash
+   sudo pacman -Syu
+   ```
 
-# Instalar navegador Brave
-yay -S brave-bin
+2. **Instalar Wayland y los componentes necesarios**:
+   ```bash
+   sudo pacman -S wayland wayland-utils xorg-xwayland mesa vulkan-intel base-devel git pipewire pipewire-alsa pipewire-pulse wireplumber brightnessctl tlp swaybg mako alacritty rofi ranger nemo ttf-nerd-fonts-symbols ttf-firacode ttf-jetbrains-mono-nerd wl-clipboard qt5-wayland qt6-wayland gtk3 gtk4
+   ```
 
-# Instalar otros paquetes útiles
-sudo pacman -S iwd
-sudo pacman -S libreoffice-fresh
-sudo pacman -S gimp
-sudo pacman -S vlc
+3. **Clonar y compilar yay desde AUR**:
+   ```bash
+   git clone https://aur.archlinux.org/yay.git
+   cd yay
+   makepkg -si
+   ```
 
-# Configuración de seguridad y firewall
-sudo pacman -S ufw
-sudo systemctl enable ufw
-sudo systemctl start ufw
+4. **Instalar Hyperland y Eww desde AUR**:
+   ```bash
+   yay -S hyperland eww
+   ```
 
-# Limpiar paquetes antiguos
-sudo pacman -S paccache
+5. **Instalar el navegador Brave**:
+   ```bash
+   yay -S brave-bin
+   ```
 
-# Instalar temas y iconos
-yay -S whitesur-gtk-theme-git
-yay -S nordzy-icons
-sudo pacman -S lxappearance
+6. **Instalar otros paquetes útiles**:
+   ```bash
+   sudo pacman -S iwd libreoffice-fresh gimp vlc
+   ```
 
-#
-sudo pacman -S sddm sddm-kcm
-sudo systemctl enable sddm.service
-sudo systemctl start sddm.service
+7. **Configurar el firewall y la seguridad**:
+   ```bash
+   sudo pacman -S ufw
+   sudo systemctl enable ufw
+   sudo systemctl start ufw
+   ```
 
-# bloqueo de pantalla
-yay -S swaylock
->>>>>>> a865e70 (Primer commit: añadir script de instalación)
+8. **Limpiar paquetes antiguos**:
+   ```bash
+   sudo pacman -S paccache
+   ```
+
+9. **Instalar temas y iconos**:
+   ```bash
+   yay -S whitesur-gtk-theme-git nordzy-icons
+   sudo pacman -S lxappearance
+   ```
+
+10. **Instalar y configurar SDDM (opcional)**:
+    ```bash
+    sudo pacman -S sddm sddm-kcm
+    sudo systemctl enable sddm.service
+    sudo systemctl start sddm.service
+    ```
+
+11. **Instalar bloqueo de pantalla (Swaylock)**:
+    ```bash
+    yay -S swaylock
+    ```
+
+## ¡Listo! Ahora tienes Hyperland configurado en tu Arch Linux.
