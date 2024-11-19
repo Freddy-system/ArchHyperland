@@ -33,6 +33,12 @@ fi
 echo "Instalando Hyperland y Eww..."
 yay -S --noconfirm hyperland eww || error_handler
 
+# Instalación de wget o curl si no están presentes
+if ! command -v wget &> /dev/null && ! command -v curl &> /dev/null; then
+    echo "Instalando wget y curl..."
+    sudo pacman -S --noconfirm wget curl || error_handler
+fi
+
 # Configuración inicial de Hyperland
 echo "Configurando Hyperland..."
 mkdir -p ~/.config/hypr
@@ -40,7 +46,14 @@ if [ -f /usr/share/hyprland/hyprland.conf ]; then
     cp /usr/share/hyprland/hyprland.conf ~/.config/hypr/ || error_handler
 else
     echo "No se encontró el archivo predeterminado. Descargando ejemplo..."
-    wget -O ~/.config/hypr/hyprland.conf https://raw.githubusercontent.com/hyprwm/Hyprland/main/example/hyprland.conf || error_handler
+    if command -v wget &> /dev/null; then
+        wget -O ~/.config/hypr/hyprland.conf https://raw.githubusercontent.com/hyprwm/Hyprland/main/example/hyprland.conf || error_handler
+    elif command -v curl &> /dev/null; then
+        curl -L -o ~/.config/hypr/hyprland.conf https://raw.githubusercontent.com/hyprwm/Hyprland/main/example/hyprland.conf || error_handler
+    else
+        echo "Error: No se pudo encontrar wget o curl para descargar el archivo."
+        error_handler
+    fi
 fi
 
 # Instalación del navegador Brave
