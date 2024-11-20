@@ -28,12 +28,6 @@ else
     echo "yay ya está instalado."
 fi
 
-# Verificar si wget está instalado, si no, instalarlo
-if ! command -v wget &> /dev/null; then
-    echo "wget no está instalado. Instalando wget..."
-    sudo pacman -S wget --noconfirm || error_handler
-fi
-
 # Instalación de Hyperland y Eww
 echo "Instalando Hyperland y Eww..."
 yay -S --noconfirm hyperland eww || error_handler
@@ -71,19 +65,6 @@ sudo pacman -Scc --noconfirm || error_handler
 echo "Instalando temas e iconos..."
 yay -S --noconfirm whitesur-gtk-theme-git nordzy-icons || error_handler
 sudo pacman -S --noconfirm lxappearance || error_handler
-
-# Instalación de un gestor de inicio de sesión ligero (ly)
-echo "Instalando gestor de inicio de sesión ly..."
-yay -S --noconfirm ly || error_handler
-sudo systemctl enable ly.service --now || error_handler
-
-# Verificar si gdm.service está presente antes de intentar deshabilitarlo
-if systemctl list-units --type=service --state=enabled | grep -q 'gdm.service'; then
-    echo "Deshabilitando gdm.service..."
-    sudo systemctl disable --now gdm.service || error_handler
-else
-    echo "gdm.service no está habilitado, no es necesario deshabilitarlo."
-fi
 
 # Instalación de bloqueo de pantalla
 echo "Instalando swaylock..."
