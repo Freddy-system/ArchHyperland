@@ -16,7 +16,7 @@ sudo pacman -S --noconfirm wayland wayland-utils wget xorg-xwayland mesa vulkan-
 base-devel git pipewire pipewire-alsa pipewire-pulse wireplumber \
 brightnessctl tlp swaybg mako alacritty rofi ranger nemo || error_handler
 
-# Instalación de yay
+# Instalación de yay si no está instalado
 if ! command -v yay &> /dev/null; then
     echo "Clonando y compilando yay desde AUR..."
     git clone https://aur.archlinux.org/yay.git || error_handler
@@ -41,11 +41,13 @@ yay -S --noconfirm hyperland eww || error_handler
 # Configuración inicial de Hyperland
 echo "Configurando Hyperland..."
 mkdir -p ~/.config/hypr
-if [ -f /usr/share/hyprland/hyprland.conf ]; then
-    cp /usr/share/hyprland/hyprland.conf ~/.config/hypr/ || error_handler
-else
-    echo "No se encontró el archivo predeterminado. Descargando ejemplo..."
-    wget -O ~/.config/hypr/hyprland.conf https://raw.githubusercontent.com/hyprwm/Hyprland/main/example/hyprland.conf || error_handler
+if [ ! -f ~/.config/hypr/hyprland.conf ]; then
+    if [ -f /usr/share/hyprland/hyprland.conf ]; then
+        cp /usr/share/hyprland/hyprland.conf ~/.config/hypr/ || error_handler
+    else
+        echo "No se encontró el archivo predeterminado. Descargando ejemplo..."
+        wget -O ~/.config/hypr/hyprland.conf https://raw.githubusercontent.com/hyprwm/Hyprland/main/example/hyprland.conf || error_handler
+    fi
 fi
 
 # Instalación del navegador Brave
@@ -59,8 +61,7 @@ sudo pacman -S --noconfirm iwd libreoffice-fresh gimp vlc || error_handler
 # Configuración del firewall
 echo "Configurando firewall..."
 sudo pacman -S --noconfirm ufw || error_handler
-sudo systemctl enable ufw || error_handler
-sudo systemctl start ufw || error_handler
+sudo systemctl enable --now ufw || error_handler
 
 # Limpieza de paquetes antiguos
 echo "Limpiando paquetes antiguos..."
@@ -74,12 +75,12 @@ sudo pacman -S --noconfirm lxappearance || error_handler
 # Instalación de un gestor de inicio de sesión ligero (ly)
 echo "Instalando gestor de inicio de sesión ly..."
 yay -S --noconfirm ly || error_handler
-sudo systemctl enable ly.service || error_handler
+sudo systemctl enable ly.service --now || error_handler
 
 # Verificar si gdm.service está presente antes de intentar deshabilitarlo
 if systemctl list-units --type=service --state=enabled | grep -q 'gdm.service'; then
     echo "Deshabilitando gdm.service..."
-    sudo systemctl disable gdm.service || error_handler
+    sudo systemctl disable --now gdm.service || error_handler
 else
     echo "gdm.service no está habilitado, no es necesario deshabilitarlo."
 fi
@@ -101,6 +102,25 @@ font:
   size: 12
 EOF
 fi
+
+# Instalación de greetd y gtkgreet
+echo "Instalando greetd y gtkgreet..."
+yay -S --noconfirm greetd gtkgreet || error_handler
+
+# Habilitar greetd
+echo "Habilitando greetd..."
+sudo systemctl enable --now greetd.service || error_handler
+
+# Configuración de greetd
+echo "Configurando greetd para usar Hyperland..."
+mkdir -p ~/.config/greetd
+cat << EOF > ~/.config/greetd/config.toml
+[session]
+command = "hyperland"
+
+[display]
+command = "gtkgreet"
+EOF
 
 # Configuración final
 echo "Instalación y configuración completadas. Reinicia tu sistema para aplicar los cambios."
