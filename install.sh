@@ -12,7 +12,7 @@ sudo pacman -Syu --noconfirm || error_handler
 
 # Instalación de Wayland y dependencias
 echo "Instalando Wayland y dependencias..."
-sudo pacman -S --noconfirm wayland wayland-utils xorg-xwayland mesa vulkan-intel \
+sudo pacman -S --noconfirm wayland wayland-utils wget xorg-xwayland mesa vulkan-intel \
 base-devel git pipewire pipewire-alsa pipewire-pulse wireplumber \
 brightnessctl tlp swaybg mako alacritty rofi ranger nemo || error_handler
 
@@ -26,6 +26,12 @@ if ! command -v yay &> /dev/null; then
     rm -rf yay
 else
     echo "yay ya está instalado."
+fi
+
+# Verificar si wget está instalado, si no, instalarlo
+if ! command -v wget &> /dev/null; then
+    echo "wget no está instalado. Instalando wget..."
+    sudo pacman -S wget --noconfirm || error_handler
 fi
 
 # Instalación de Hyperland y Eww
