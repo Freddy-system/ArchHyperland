@@ -14,8 +14,7 @@ sudo pacman -Syu --noconfirm || error_handler
 echo "Instalando Wayland y dependencias..."
 sudo pacman -S --noconfirm wayland wayland-utils xorg-xwayland mesa vulkan-intel \
 base-devel git pipewire pipewire-alsa pipewire-pulse wireplumber \
-brightnessctl tlp swaybg mako alacritty rofi ranger nemo \ 
-qt5-wayland qt6-wayland gtk3 gtk4 || error_handler
+brightnessctl tlp swaybg mako alacritty rofi ranger nemo || error_handler
 
 # Instalación de yay
 if ! command -v yay &> /dev/null; then
