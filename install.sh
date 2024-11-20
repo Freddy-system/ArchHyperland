@@ -89,10 +89,6 @@ yay -S --noconfirm ly || error_handler
 sudo systemctl enable ly.service || error_handler
 sudo systemctl disable gdm.service || error_handler
 
-# Instalación de bloqueo de pantalla
-echo "Instalando swaylock..."
-yay -S --noconfirm swaylock || error_handler
-
 # Configuración adicional para Alacritty
 echo "Verificando configuración de Alacritty..."
 mkdir -p ~/.config/alacritty
