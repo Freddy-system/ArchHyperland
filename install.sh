@@ -15,6 +15,7 @@ echo "Instalando Wayland y dependencias..."
 sudo pacman -S --noconfirm wayland wayland-utils xorg-xwayland mesa vulkan-intel \
 base-devel git pipewire pipewire-alsa pipewire-pulse wireplumber \
 brightnessctl tlp swaybg mako alacritty rofi ranger nemo \
+ttf-nerd-fonts-symbols ttf-firacode ttf-jetbrains-mono-nerd \
 wl-clipboard qt5-wayland qt6-wayland gtk3 gtk4 || error_handler
 
 # Instalación de yay
@@ -33,12 +34,6 @@ fi
 echo "Instalando Hyperland y Eww..."
 yay -S --noconfirm hyperland eww || error_handler
 
-# Instalación de wget o curl si no están presentes
-if ! command -v wget &> /dev/null && ! command -v curl &> /dev/null; then
-    echo "Instalando wget y curl..."
-    sudo pacman -S --noconfirm wget curl || error_handler
-fi
-
 # Configuración inicial de Hyperland
 echo "Configurando Hyperland..."
 mkdir -p ~/.config/hypr
@@ -46,14 +41,7 @@ if [ -f /usr/share/hyprland/hyprland.conf ]; then
     cp /usr/share/hyprland/hyprland.conf ~/.config/hypr/ || error_handler
 else
     echo "No se encontró el archivo predeterminado. Descargando ejemplo..."
-    if command -v wget &> /dev/null; then
-        wget -O ~/.config/hypr/hyprland.conf https://raw.githubusercontent.com/hyprwm/Hyprland/main/example/hyprland.conf || error_handler
-    elif command -v curl &> /dev/null; then
-        curl -L -o ~/.config/hypr/hyprland.conf https://raw.githubusercontent.com/hyprwm/Hyprland/main/example/hyprland.conf || error_handler
-    else
-        echo "Error: No se pudo encontrar wget o curl para descargar el archivo."
-        error_handler
-    fi
+    wget -O ~/.config/hypr/hyprland.conf https://raw.githubusercontent.com/hyprwm/Hyprland/main/example/hyprland.conf || error_handler
 fi
 
 # Instalación del navegador Brave
@@ -72,11 +60,7 @@ sudo systemctl start ufw || error_handler
 
 # Limpieza de paquetes antiguos
 echo "Limpiando paquetes antiguos..."
-if ! command -v paccache &> /dev/null; then
-    echo "Instalando pacman-contrib (para paccache)..."
-    sudo pacman -S --noconfirm pacman-contrib || error_handler
-fi
-sudo paccache -r || error_handler
+sudo pacman -Scc --noconfirm || error_handler
 
 # Instalación de temas e iconos
 echo "Instalando temas e iconos..."
@@ -87,7 +71,18 @@ sudo pacman -S --noconfirm lxappearance || error_handler
 echo "Instalando gestor de inicio de sesión ly..."
 yay -S --noconfirm ly || error_handler
 sudo systemctl enable ly.service || error_handler
-sudo systemctl disable gdm.service || error_handler
+
+# Verificar si gdm.service está presente antes de intentar deshabilitarlo
+if systemctl list-units --type=service --state=enabled | grep -q 'gdm.service'; then
+    echo "Deshabilitando gdm.service..."
+    sudo systemctl disable gdm.service || error_handler
+else
+    echo "gdm.service no está habilitado, no es necesario deshabilitarlo."
+fi
+
+# Instalación de bloqueo de pantalla
+echo "Instalando swaylock..."
+yay -S --noconfirm swaylock || error_handler
 
 # Configuración adicional para Alacritty
 echo "Verificando configuración de Alacritty..."
